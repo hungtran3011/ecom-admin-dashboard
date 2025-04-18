@@ -10,7 +10,7 @@ const links = [
 ];
 
 const Sidebar: React.FC = () => {
-  const [activeItem, setActiveItem] = React.useState<string | null>(null);
+  const [activeItem, setActiveItem] = React.useState<string | null>(window.location.pathname);
   const handleItemClick = (item: string) => {
     setActiveItem(item);
   };
