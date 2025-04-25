@@ -3,12 +3,12 @@
 
 @font-face {
     font-family: "Material Icons";
-    src: url("mdi.woff2") format("woff2");
+    src: url("../public/mdi.woff2") format("woff2");
 }
 
 @font-face {
     font-family: "Material Icons Filled";
-    src: url("mdi-filled.woff2") format("woff2");
+    src: url("../public/mdi-filled.woff2") format("woff2");
 }
 
 .mdi {

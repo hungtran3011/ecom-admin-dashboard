@@ -20,7 +20,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
         <div className="mt-2">
-          <span className="text-xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
+          <span className="text-xl font-bold text-gray-900">{product.price.toLocaleString("vi-VN")}₫</span>
         </div>
         <p className="mt-2 text-gray-600 text-sm line-clamp-3">{product.description}</p>
         

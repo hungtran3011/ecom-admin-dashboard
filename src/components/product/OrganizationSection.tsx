@@ -25,7 +25,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                     <select
                         id="category"
                         name="category"
-                        value={product.category?._id || ''}
+                        value={typeof product.category === 'string' ? product.category : product.category?._id || ''}
                         onChange={onCategoryChange}
                         className="input-field"
                     >

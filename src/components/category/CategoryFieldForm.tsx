@@ -1,13 +1,14 @@
 import React from 'react';
-import { CategoryField } from '../../types/product.types';
+import { CategoryFieldCreate } from '../../types/product.types';
 
 interface CategoryFieldFormProps {
-    field: CategoryField;
+    field: CategoryFieldCreate;
     error?: string;
-    onChange: (field: CategoryField) => void;
+    onChange: (field: CategoryFieldCreate) => void;
     onRemove: () => void;
     onDuplicate?: () => void;
     isDragging?: boolean;
+    index: number; // Add index prop for identifier
 }
 
 const CategoryFieldForm: React.FC<CategoryFieldFormProps> = ({ 
@@ -16,7 +17,8 @@ const CategoryFieldForm: React.FC<CategoryFieldFormProps> = ({
     onChange, 
     onRemove,
     onDuplicate,
-    isDragging = false
+    isDragging = false,
+    index
 }) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -30,14 +32,15 @@ const CategoryFieldForm: React.FC<CategoryFieldFormProps> = ({
         onChange({ ...field, [name]: value });
     };
 
+    // Use index as fallback for field identification
+    const fieldId = `field-${index}`;
+
     return (
         <div className={`p-4 border ${error ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} rounded-md ${isDragging ? 'opacity-70' : ''}`}>
             <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center gap-2">
-                    <div className="cursor-move px-1 text-gray-400" title="Drag to reorder">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path fillRule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-                        </svg>
+                    <div className="cursor-move px-1 text-gray-400 flex" title="Drag to reorder">
+                        <span className="mdi">drag_handle</span>
                     </div>
                     <h3 className="font-medium text-gray-800">Field Configuration</h3>
                 </div>
@@ -46,18 +49,18 @@ const CategoryFieldForm: React.FC<CategoryFieldFormProps> = ({
                         <button
                             type="button"
                             onClick={onDuplicate}
-                            className="text-blue-600 hover:text-blue-800 text-sm"
+                            className="text-blue-600 hover:text-blue-800 text-sm mdi"
                             title="Duplicate field"
                         >
-                            Copy
+                            content_copy
                         </button>
                     )}
                     <button
                         type="button"
                         onClick={onRemove}
-                        className="text-red-600 hover:text-red-800 text-sm"
+                        className="text-red-600 hover:text-red-800 text-sm mdi"
                     >
-                        Remove
+                        delete
                     </button>
                 </div>
             </div>
@@ -70,11 +73,11 @@ const CategoryFieldForm: React.FC<CategoryFieldFormProps> = ({
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label htmlFor={`field-name-${field._id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor={`field-name-${fieldId}`} className="block text-sm font-medium text-gray-700 mb-1">
                         Field Name*
                     </label>
                     <input
-                        id={`field-name-${field._id}`}
+                        id={`field-name-${fieldId}`}
                         name="name"
                         type="text"
                         value={field.name}
@@ -86,11 +89,11 @@ const CategoryFieldForm: React.FC<CategoryFieldFormProps> = ({
                 </div>
                 
                 <div>
-                    <label htmlFor={`field-type-${field._id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor={`field-type-${fieldId}`} className="block text-sm font-medium text-gray-700 mb-1">
                         Field Type*
                     </label>
                     <select
-                        id={`field-type-${field._id}`}
+                        id={`field-type-${fieldId}`}
                         name="type"
                         value={field.type}
                         onChange={handleChange}
@@ -106,14 +109,14 @@ const CategoryFieldForm: React.FC<CategoryFieldFormProps> = ({
                 
                 <div className="flex items-center">
                     <input
-                        id={`field-required-${field._id}`}
+                        id={`field-required-${fieldId}`}
                         name="required"
                         type="checkbox"
                         checked={field.required}
                         onChange={handleChange}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
-                    <label htmlFor={`field-required-${field._id}`} className="ml-2 block text-sm text-gray-700">
+                    <label htmlFor={`field-required-${fieldId}`} className="ml-2 block text-sm text-gray-700">
                         Required Field
                     </label>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllProducts } from '../../services/products';
-import { ProductCard } from '../../components/ProductCard';
+import { ProductCard } from '../../components/product/ProductCard';
 import { Link } from 'react-router-dom';
 
 // Define the product type based on actual API response

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import axiosInstance from '../services/axios';
-import { useUser } from '../hooks/useUser';
-import { Category } from '../types/product.types';
-import DeleteConfirmationModal from '../components/common/DeleteConfirmationModal';
-import Pagination from '../components/common/Pagination';
-import CategoryFieldsList from '../components/category/CategoryFieldsList';
+import axiosInstance from '../../services/axios';
+import { useUser } from '../../hooks/useUser';
+import { Category } from '../../types/product.types';
+import DeleteConfirmationModal from '../../components/common/DeleteConfirmationModal';
+import Pagination from '../../components/common/Pagination';
+import CategoryFieldsList from '../../components/category/CategoryFieldsList';
 
 const Categories: React.FC = () => {
     const { accessToken } = useUser();
@@ -150,19 +150,19 @@ const Categories: React.FC = () => {
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div className="flex space-x-2" onClick={e => e.stopPropagation()}>
                                                     <Link 
-                                                        to={`/admin/categories/edit/${category._id}`} 
-                                                        className="text-blue-600 hover:text-blue-900"
+                                                        to={`/admin/categories/${category._id}`} 
+                                                        className="text-blue-600 hover:text-blue-900 mdi"
                                                     >
                                                         Edit
                                                     </Link>
                                                     <button 
-                                                        className="text-red-600 hover:text-red-900"
+                                                        className="text-red-600 hover:text-red-900 mdi"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleDeleteClick(category);
                                                         }}
                                                     >
-                                                        Delete
+                                                        delete
                                                     </button>
                                                 </div>
                                             </td>

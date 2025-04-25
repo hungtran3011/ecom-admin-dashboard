@@ -24,10 +24,19 @@ const DynamicFieldsSection: React.FC<DynamicFieldsSectionProps> = ({
             <div className="space-y-4">
                 {selectedCategory.fields.map((categoryField) => {
                     // Use field._id as it's defined in the Category type
-                    const currentFieldValue = Array.isArray(dynamicFieldValues)
-                        ? dynamicFieldValues.find(df => df.name === categoryField.name)?.value || ''
-                        : '';
-                    
+                    let currentFieldValue: string | number = ''; // Initialize with default value
+                    if (categoryField.type === "String") {
+                        currentFieldValue = Array.isArray(dynamicFieldValues)
+                            ? dynamicFieldValues.find(df => df.name === categoryField.name)?.value || ''
+                            : '';
+                    } else if (categoryField.type === "Number") {
+                        const foundValue = Array.isArray(dynamicFieldValues)
+                            ? dynamicFieldValues.find(df => df.name === categoryField.name)?.value
+                            : null;
+                        // Display as empty string if value is empty, 0, null or undefined, but store as 0
+                        currentFieldValue = foundValue === 0 || foundValue === '' || foundValue === null || foundValue === undefined ? '' : foundValue;
+                    }
+
                     // Use field._id for unique input identifiers
                     const inputId = `dynamic-${categoryField._id}`;
 

@@ -6,13 +6,15 @@ import Orders from '../pages/Orders';
 import Users from '../pages/Users';
 import ProductDetails from '../pages/products/ProductDetails';
 import EditProduct from '../pages/products/EditProduct';
-import Categories from '../pages/Categories';
-import CategoryForm from '../pages/CategoryForm';
+import Categories from '../pages/categories/Categories';
+import CategoryForm from '../pages/categories/CategoryForm';
+import NewProduct from '../pages/products/NewProduct';
 
 const AdminRoutes: React.FC = () => (
   <Routes>
     <Route path="dashboard" element={<Dashboard />} />
     <Route path="products" element={<Products />} />
+    <Route path="products/new" element={<NewProduct />} />
     <Route path="orders" element={<Orders />} />
     <Route path="users" element={<Users />} />
     <Route path="products/:id" element={<ProductDetails />} />

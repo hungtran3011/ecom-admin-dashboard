@@ -7,11 +7,13 @@ export type Product = {
     stock?: number;
     sku?: string;
     status?: 'active' | 'inactive' | 'draft';
-    images?: string[];
+    productImages?: string[];
     fields?: Record<string, string>;
     createdBy?: string;
     updatedAt?: string;
 };
+
+export type ProductCreate = Omit<Product, '_id' | 'createdBy' | 'updatedAt'>;
 
 // Updated Category type to match the API response
 export type Category = {
@@ -27,7 +29,18 @@ export type Category = {
     createdBy: string;
 };
 
+export type CategoryCreate = Omit<Category, '_id' | 'createdBy'>;
+
 export type FieldValues = {
     name: string;
-    value: string;
+    value: string | number;
 }
+
+export type CategoryField = {
+    _id: string;
+    name: string;
+    type: string;
+    required: boolean;
+}
+
+export type CategoryFieldCreate = Omit<CategoryField, '_id'>;
