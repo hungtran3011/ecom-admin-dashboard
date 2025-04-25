@@ -8,9 +8,8 @@ import {
   loginUser, 
   logoutUser, 
   refreshAccessToken as refreshToken,
-  // fetchUserProfile,
-  User 
 } from '../services/authService';
+import type { User, JWTPayload } from '../types/auth.types';
 import { jwtDecode } from 'jwt-decode';
 
 // Auth query keys
@@ -58,7 +57,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     staleTime: Infinity, // Token doesn't get stale until explicitly invalidated
   });
 
-  const user = accessToken ? jwtDecode(accessToken).user : null;
+  const user = accessToken ? jwtDecode<JWTPayload>(accessToken).user : null;
 
   // Login mutation
   const loginMutation = useMutation({

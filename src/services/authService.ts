@@ -1,13 +1,7 @@
 // src/services/authService.ts
 import axiosInstance from './axios';
 import { jwtDecode } from 'jwt-decode';
-
-export type User = {
-  name: string | null | undefined;
-  email?: string | null | undefined;
-  avatar?: string | null | undefined;
-  id?: string | null | undefined;
-};
+import type { JWTPayload } from '../types/auth.types';
 
 export async function fetchCsrfToken() {
   const response = await axiosInstance.get('/auth/csrf-token');
@@ -41,11 +35,9 @@ export async function logoutUser(accessToken: string) {
 }
 
 export async function refreshAccessToken() {
-  const response = await axiosInstance.post('/auth/admin/refresh-token');
-  
-  // Decode the token to get user info
+  const response = await axiosInstance.post('/auth/token/refresh');
   if (response.data.accessToken) {
-    const decodedToken = jwtDecode(response.data.accessToken);
+    const decodedToken = jwtDecode<JWTPayload>(response.data.accessToken);
     return {
       ...response.data,
       user: decodedToken.user

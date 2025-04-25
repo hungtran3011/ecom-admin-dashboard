@@ -57,7 +57,6 @@ const CategoryForm: React.FC = () => {
         isRestored, 
         lastSaved, 
         clearDraft,
-        restoredData
     } = useAutoSave<CategoryFormState>(
         formState,
         DRAFT_STORAGE_KEY,

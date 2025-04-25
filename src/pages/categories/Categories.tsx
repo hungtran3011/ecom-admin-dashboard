@@ -109,7 +109,20 @@ const Categories: React.FC = () => {
                     Add New Category
                 </Link>
             </div>
-
+            {
+                error && (
+                    <div className="bg-red-100 text-red-700 p-4 rounded-md mb-4">
+                        {error}
+                    </div>
+                )
+            }
+            {
+                success && (
+                    <div className="bg-green-100 text-green-700 p-4 rounded-md mb-4">
+                        {success}
+                    </div>
+                )
+            }
             {/* Categories List */}
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
                 {loading ? (
