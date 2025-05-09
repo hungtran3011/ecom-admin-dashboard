@@ -11,6 +11,7 @@ export type Product = {
     fields?: Record<string, string>;
     createdBy?: string;
     updatedAt?: string;
+    hasVariations?: boolean; // Flag indicating if product has variations
 };
 
 export type ProductCreate = Omit<Product, '_id' | 'createdBy' | 'updatedAt'>;

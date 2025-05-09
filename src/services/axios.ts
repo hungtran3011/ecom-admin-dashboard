@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { applyCsrfInterceptor, getCsrfToken } from './csrf';
+import { applyTokenRefreshInterceptor } from './tokenRefreshInterceptor';
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -17,5 +18,8 @@ const axiosInstance = axios.create({
 
 // Apply CSRF protection
 applyCsrfInterceptor(axiosInstance);
+
+// Apply token refresh interceptor
+applyTokenRefreshInterceptor(axiosInstance);
 
 export default axiosInstance;

@@ -8,6 +8,7 @@ type Product = {
   price: number;
   category: string;
   createdBy: string;
+  hasVariations?: boolean;
 };
 
 type ProductCardProps = {
@@ -18,7 +19,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
+        <div className="flex justify-between items-start">
+          <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
+          {product.hasVariations && (
+            <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+              Variations
+            </span>
+          )}
+        </div>
         <div className="mt-2">
           <span className="text-xl font-bold text-gray-900">{product.price.toLocaleString("vi-VN")}₫</span>
         </div>

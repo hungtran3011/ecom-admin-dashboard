@@ -1,7 +1,18 @@
-// src/services/authService.ts
+import axios from 'axios';
 import axiosInstance from './axios';
 import { jwtDecode } from 'jwt-decode';
 import type { JWTPayload } from '../types/auth.types';
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+// Create a separate axios instance for refresh calls to avoid interceptor loops
+const refreshClient = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
+});
 
 export async function fetchCsrfToken() {
   const response = await axiosInstance.get('/auth/csrf-token');
@@ -35,8 +46,13 @@ export async function logoutUser(accessToken: string) {
 }
 
 export async function refreshAccessToken() {
-  const response = await axiosInstance.post('/auth/token/refresh');
+  // Use the separate client to avoid interceptor loops
+  const response = await refreshClient.post('/auth/token/refresh');
+  
   if (response.data.accessToken) {
+    // Store the new token
+    localStorage.setItem('accessToken', response.data.accessToken);
+    
     const decodedToken = jwtDecode<JWTPayload>(response.data.accessToken);
     return {
       ...response.data,

@@ -284,6 +284,37 @@ const ProductDetails: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        {/* Variations Section - only shown if product has variations */}
+        {extendedProduct.hasVariations && (
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <h3 className="text-xl font-medium text-gray-800 mb-4">Product Variations</h3>
+            <div className="bg-white rounded-lg border border-gray-200">
+              {/* If you have variations data, map through it here */}
+              <div className="px-4 py-5 sm:p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <p className="text-sm text-gray-500">
+                    This product has multiple variations (e.g. different sizes, colors)
+                  </p>
+                  <Link
+                    to={`/admin/products/edit/${id}?tab=variations`}
+                    className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded hover:bg-blue-200 transition-colors"
+                  >
+                    Manage Variations
+                  </Link>
+                </div>
+                
+                {/* This would be replaced with your actual variations data */}
+                <div className="border-t border-gray-200 pt-4">
+                  <p className="text-center text-gray-500 py-4">
+                    To view or edit variations, click "Manage Variations"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="mt-8 pt-4 border-t border-gray-200">
           <Link
             to="/admin/products"

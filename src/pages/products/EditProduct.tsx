@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import axiosInstance from '../../services/axios';
 import { useUser } from '../../hooks/useUser';
@@ -12,6 +12,7 @@ import OrganizationSection from '../../components/product/OrganizationSection';
 import DynamicFieldsSection from '../../components/product/DynamicFieldsSection';
 import ImageManagementSection from '../../components/product/ImageManagementSection';
 import ProductFormActions from '../../components/product/ProductFormActions';
+import VariationsList from '../../components/product/VariationsList';
 
 // Use the provided FieldValues type
 type DynamicFieldValue = FieldValues;
@@ -32,10 +33,14 @@ interface ProductFormState {
 const EditProduct: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
     const { accessToken } = useUser();
     const DRAFT_STORAGE_KEY = `product_draft_edit_${id}`;
     const initialLoadCompleteRef = React.useRef(false);
 
+    // Add tab state
+    const [activeTab, setActiveTab] = useState<'general' | 'variations'>('general');
+    
     const [product, setProduct] = useState<Product | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
@@ -184,6 +189,39 @@ const EditProduct: React.FC = () => {
 
         fetchData();
         return () => { isMounted = false; };
+    }, [id, DRAFT_STORAGE_KEY]);
+
+    // Add this useEffect to check for the tab query parameter
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const tab = searchParams.get('tab');
+        if (tab === 'variations') {
+            setActiveTab('variations');
+        }
+    }, [location]);
+
+    // Add this function to reload product data when variations change
+    const handleVariationsUpdate = useCallback(async () => {
+        if (!id) return;
+        
+        try {
+            const response = await axiosInstance.get(`/product/${id}`, {
+                headers: { 'cache-control': 'no-cache' }
+            });
+            
+            if (response.data) {
+                // Just update the hasVariations flag
+                setProduct(prevProduct => {
+                    if (!prevProduct) return null;
+                    return {
+                        ...prevProduct,
+                        hasVariations: response.data.hasVariations
+                    };
+                });
+            }
+        } catch (err) {
+            console.error('Error refreshing product after variation change:', err);
+        }
     }, [id]);
 
     // Handle discarding the draft
@@ -469,45 +507,92 @@ const EditProduct: React.FC = () => {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="mt-6">
-                <div className="grid grid-cols-1 gap-8">
-                    {/* Image Management Section (full width) */}
-                    <div className="col-span-full">
-                        <ImageManagementSection 
+            {/* Tab Navigation */}
+            <div className="mt-6 border-b border-gray-200">
+                <nav className="flex -mb-px">
+                    <button 
+                        type="button"
+                        onClick={() => setActiveTab('general')} 
+                        className={`inline-block py-4 px-6 font-medium text-sm border-b-2 ${
+                            activeTab === 'general'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        }`}
+                    >
+                        General Information
+                    </button>
+                    <button 
+                        type="button"
+                        onClick={() => setActiveTab('variations')} 
+                        className={`py-4 px-6 font-medium text-sm border-b-2 flex items-center ${
+                            activeTab === 'variations'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        }`}
+                    >
+                        Variations
+                        {product?.hasVariations && (
+                            <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+                                ✓
+                            </span>
+                        )}
+                    </button>
+                </nav>
+            </div>
+
+            {/* Conditional rendering based on active tab */}
+            {activeTab === 'general' ? (
+                <form onSubmit={handleSubmit} className="mt-6">
+                    {/* Your existing form content */}
+                    <div className="grid grid-cols-1 gap-8">
+                        {/* Image Management Section (full width) */}
+                        <div className="col-span-full">
+                            <ImageManagementSection 
+                                productId={product._id}
+                                images={product.productImages || []}
+                                accessToken={accessToken || ''}
+                                onImagesChange={handleImagesChange}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            {/* Column 1 */}
+                            <div className="space-y-6">
+                                <BasicInfoSection product={product} onChange={handleInputChange} />
+                                <PricingInventorySection product={product} onChange={handleInputChange} />
+                            </div>
+
+                            {/* Column 2 */}
+                            <div className="space-y-6">
+                                <OrganizationSection
+                                    product={product}
+                                    categories={categories}
+                                    selectedCategory={selectedCategory}
+                                    onCategoryChange={handleCategoryChange}
+                                    onStatusChange={handleInputChange}
+                                />
+                                <DynamicFieldsSection
+                                    selectedCategory={selectedCategory}
+                                    dynamicFieldValues={dynamicFieldValues}
+                                    onChange={handleDynamicFieldChange}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <ProductFormActions isSaving={saving} isLoading={loading} />
+                </form>
+            ) : (
+                <div className="mt-6">
+                    {product && (
+                        <VariationsList
                             productId={product._id}
-                            images={product.productImages || []}
-                            accessToken={accessToken || ''}
-                            onImagesChange={handleImagesChange}
+                            productName={product.name}
+                            onUpdate={handleVariationsUpdate}
                         />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        {/* Column 1 */}
-                        <div className="space-y-6">
-                            <BasicInfoSection product={product} onChange={handleInputChange} />
-                            <PricingInventorySection product={product} onChange={handleInputChange} />
-                        </div>
-
-                        {/* Column 2 */}
-                        <div className="space-y-6">
-                            <OrganizationSection
-                                product={product}
-                                categories={categories}
-                                selectedCategory={selectedCategory}
-                                onCategoryChange={handleCategoryChange}
-                                onStatusChange={handleInputChange} // Use the general handler
-                            />
-                            <DynamicFieldsSection
-                                selectedCategory={selectedCategory}
-                                dynamicFieldValues={dynamicFieldValues}
-                                onChange={handleDynamicFieldChange}
-                            />
-                        </div>
-                    </div>
+                    )}
                 </div>
-
-                <ProductFormActions isSaving={saving} isLoading={loading} />
-            </form>
+            )}
         </div>
     );
 };
