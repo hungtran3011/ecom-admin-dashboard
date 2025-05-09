@@ -1,4 +1,5 @@
 import axios, {AxiosInstance} from 'axios';
+import Cookies from 'js-cookie'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -18,6 +19,15 @@ const tokenClient = axios.create({
 // Get the CSRF token, fetching a new one if needed
 export async function getCsrfToken(forceRefresh = false) {
   const now = Date.now();
+  
+  // First, check if there's a valid CSRF token in the cookies
+  const cookieToken = Cookies.get('csrf-token'); // Use your actual cookie name here
+  if (cookieToken && !forceRefresh) {
+    // If the cookie exists and we're not forcing a refresh, use this token
+    csrfToken = cookieToken;
+    lastFetchTime = now;
+    return csrfToken;
+  }
   
   // Return cached token if it's still valid and not forcing refresh
   if (!forceRefresh && csrfToken && (now - lastFetchTime) < TOKEN_LIFETIME) {
@@ -40,10 +50,21 @@ export async function getCsrfToken(forceRefresh = false) {
     console.debug('[CSRF] Fetching new token');
     fetchPromise = tokenClient.get('/auth/csrf-token')
       .then(response => {
+        // Check for token in cookies first (preferred method)
+        const newCookieToken = Cookies.get('csrf-token'); // Use your actual cookie name
+        
+        if (newCookieToken) {
+          csrfToken = newCookieToken;
+          lastFetchTime = Date.now();
+          console.debug('[CSRF] New token received from cookie');
+          return csrfToken;
+        }
+        
+        // Fall back to response body if no cookie
         if (response.data && response.data.csrfToken) {
           csrfToken = response.data.csrfToken;
           lastFetchTime = Date.now();
-          console.debug('[CSRF] New token received');
+          console.debug('[CSRF] New token received from response body');
           return csrfToken;
         } else {
           console.warn('[CSRF] Invalid token response', response.data);
