@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 let csrfToken: string | null = null;
 let lastFetchTime = 0;
 let fetchPromise: Promise<string | null> | null  = null;
-const TOKEN_LIFETIME = 25 * 60 * 1000; // 25 minutes
+const TOKEN_LIFETIME = 24 * 60 * 60 * 1000; // 1 day
 const MIN_FETCH_INTERVAL = 1 * 60 * 1000; // 1 minute between fetch attempts
 
 // Axios instance that doesn't use the token interceptor to avoid circular dependency
