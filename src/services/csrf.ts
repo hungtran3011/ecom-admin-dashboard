@@ -119,12 +119,6 @@ export function applyCsrfInterceptor(axiosInstance: AxiosInstance): void {
   axiosInstance.interceptors.request.use(async (config) => {
     // Only add token to state-changing requests
     if (config.method && ['post', 'put', 'patch', 'delete'].includes(config.method.toLowerCase())) {
-      // Skip if this is a special request that manages its own CSRF token
-      if (config.headers?.['X-Skip-Csrf'] === 'true') {
-        delete config.headers['X-Skip-Csrf']; // Clean up our custom header
-        return config;
-      }
-      
       const token = await getCsrfToken();
       if (token) {
         config.headers[CSRF_HEADER_NAME] = token;

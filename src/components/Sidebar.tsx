@@ -1,6 +1,5 @@
 import React from 'react';
-import * as NavigationMenu from '@radix-ui/react-navigation-menu';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const links = [
   { to: '/admin/dashboard', label: 'Dashboard' },
@@ -17,30 +16,30 @@ const Sidebar: React.FC = () => {
     setActiveItem(item);
   };
   return (
-  <aside className="hidden md:block w-64 bg-white shadow">
-    <div className="p-4 text-xl font-bold">Admin</div>
-    <NavigationMenu.Root className="flex flex-col p-2 w-full">
-      <NavigationMenu.List className="w-full">
-        {links.map((link) => (
-          <NavigationMenu.Item key={link.to} className="w-full">
-            <NavigationMenu.Link asChild className="w-full p-4">
-              <Link
+    <div className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-colors duration-200">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white">Admin Panel</h2>
+      </div>
+      <nav className="flex-1 overflow-y-auto p-4">
+        <ul className="space-y-2">
+          {links.map((link) => (
+            <li key={link.to}>
+              <NavLink
                 to={link.to}
-                className={`block w-full text-left rounded hover:bg-gray-100 ${
-                  activeItem === link.to
-                    ? 'bg-gray-200 font-semibold'
-                    : 'text-gray-700'
-                }`}
-                onClick={() => handleItemClick(link.to)}
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 ${
+                    isActive ? 'bg-blue-100 dark:bg-blue-800/30 text-blue-700 dark:text-blue-300' : ''
+                  }`
+                }
               >
                 {link.label}
-              </Link>
-            </NavigationMenu.Link>
-          </NavigationMenu.Item>
-        ))}
-      </NavigationMenu.List>
-    </NavigationMenu.Root>
-  </aside>
-)};
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
+};
 
 export default Sidebar;

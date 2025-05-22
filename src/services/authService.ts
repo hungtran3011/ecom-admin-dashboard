@@ -121,12 +121,11 @@ export function refreshAccessToken(): Promise<RefreshTokenResponse> {
   
   // Use Promise chain pattern instead of async/await
   return authClient.post<RefreshTokenResponse>(
-    '/auth/refresh-token', 
+    '/auth/admin/refresh-token', 
     {}, 
     {
       headers: {
         ...(csrfToken ? { [CSRF_HEADER_NAME]: csrfToken } : {}),
-        'X-Skip-Csrf': 'true', // Skip regular interceptor
       },
       withCredentials: true,
     }

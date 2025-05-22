@@ -9,6 +9,7 @@ import EditProduct from '../pages/products/EditProduct';
 import Categories from '../pages/categories/Categories';
 import CategoryForm from '../pages/categories/CategoryForm';
 import NewProduct from '../pages/products/NewProduct';
+import Settings from '../pages/Settings';
 
 const AdminRoutes: React.FC = () => (
   <Routes>
@@ -22,6 +23,7 @@ const AdminRoutes: React.FC = () => (
     <Route path="categories" element={<Categories />} />
     <Route path="categories/new" element={<CategoryForm />} />
     <Route path="categories/:id" element={<CategoryForm />} />
+    <Route path="settings" element={<Settings />} />
   </Routes>
 );
 
