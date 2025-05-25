@@ -1,6 +1,9 @@
-import React from 'react';
+interface EmptyStateProps {
+  message: string;
+  description?: string;
+}
 
-export const EmptyState = ({ message, description }) => {
+export const EmptyState = ({ message, description }: EmptyStateProps)  => {
   return (
     <div className="py-12 flex flex-col items-center justify-center text-center bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200">
       <div className="p-4 rounded-full bg-gray-100 dark:bg-gray-700 mb-4 transition-colors duration-200">

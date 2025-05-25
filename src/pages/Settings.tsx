@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PageHeader } from '../components/ui/PageHeader';
 
 export default function Settings() {

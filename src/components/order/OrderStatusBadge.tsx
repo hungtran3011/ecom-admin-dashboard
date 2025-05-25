@@ -1,5 +1,3 @@
-import React from 'react';
-
 type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
 
 interface OrderStatusBadgeProps {

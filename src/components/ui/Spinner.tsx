@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const Spinner = ({ size = 'md' }) => {
   const sizeClass = {
     sm: 'h-4 w-4',
