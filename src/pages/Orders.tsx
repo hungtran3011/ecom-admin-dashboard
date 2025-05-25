@@ -18,36 +18,58 @@ import { ActionsDropdown } from '../components/ui/ActionsDropdown';
 
 // Order status types
 type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
+type PaymentMethod = 'card' | 'cash' | 'momo' | 'bank' | 'paypal';
 
-// Order interface
+// Updated Order interface to match the API response
 interface Order {
   _id: string;
-  orderNumber: string;
-  customer: {
+  user: {
     _id: string;
     name: string;
     email: string;
   };
-  totalAmount: number;
-  status: OrderStatus;
-  paymentStatus: 'paid' | 'pending' | 'failed';
   items: Array<{
     product: {
       _id: string;
       name: string;
+      price: number;
+      productImages?: string[];
     };
     quantity: number;
-    price: number;
+    unitPrice: number;
+    deliveryDate: string;
+    deliveryFee: number;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
   }>;
   shippingAddress: {
+    home: string;
     street: string;
     city: string;
-    state: string;
-    zipCode: string;
+    state?: string;
+    zip: string;
     country: string;
   };
+  paymentDetails: {
+    method: PaymentMethod;
+  };
+  isGuestOrder: boolean;
+  status: OrderStatus;
+  totalAmount: number;
   createdAt: string;
   updatedAt: string;
+}
+
+// Response type for pagination handling
+interface OrdersResponse {
+  orders: Order[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
 }
 
 export default function Orders() {
@@ -104,7 +126,7 @@ export default function Orders() {
       setStatusUpdateLoading(orderId);
       
       try {
-        await axiosInstance.patch(`/order/${orderId}/status`, 
+        await axiosInstance.put(`/order/${orderId}/status`, 
           { status: newStatus },
           {
             headers: {
@@ -137,39 +159,50 @@ export default function Orders() {
     const columnHelper = createColumnHelper<Order>();
     
     const columns = [
-      columnHelper.accessor('orderNumber', {
+      columnHelper.accessor('_id', {
         header: 'Order #',
-        cell: info => <span className="font-medium text-gray-900">{info.getValue()}</span>,
+        cell: info => <span className="font-medium text-gray-900 dark:text-white transition-colors duration-200">{info.getValue()}</span>,
       }),
-      columnHelper.accessor(row => row.customer, {
-        id: 'customer',
+      columnHelper.accessor(row => row.user, {
+        id: 'user',
         header: 'Customer',
         cell: info => (
           <div>
-            <div>{info.getValue().name}</div>
-            <div className="text-xs text-gray-400">{info.getValue().email}</div>
+            <div className="font-medium text-gray-800 dark:text-gray-200 transition-colors duration-200">{info.getValue().name}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">{info.getValue().email}</div>
           </div>
         ),
       }),
       columnHelper.accessor('createdAt', {
         header: 'Date',
-        cell: info => formatDate(info.getValue()),
+        cell: info => <span className="text-gray-700 dark:text-gray-300 transition-colors duration-200">{formatDate(info.getValue())}</span>,
       }),
       columnHelper.accessor('status', {
         header: 'Status',
         cell: info => <StatusBadge status={info.getValue()} />,
       }),
-      columnHelper.accessor('paymentStatus', {
+      columnHelper.accessor(row => row.paymentDetails.method, {
+        id: 'paymentMethod',
         header: 'Payment',
-        cell: info => <StatusBadge status={info.getValue()} />,
+        cell: info => (
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+            ${info.getValue() === 'card' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' :
+              info.getValue() === 'cash' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' :
+              info.getValue() === 'momo' ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-400' :
+              'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-400'} 
+            transition-colors duration-200`}
+          >
+            {info.getValue()}
+          </span>
+        ),
       }),
       columnHelper.accessor('totalAmount', {
         header: 'Total',
-        cell: info => formatCurrency(info.getValue()),
+        cell: info => <span className="text-gray-700 dark:text-gray-300 transition-colors duration-200">{formatCurrency(info.getValue())}</span>,
       }),
       columnHelper.display({
         id: 'actions',
-        header: () => <div className="text-right">Actions</div>,
+        header: () => <div className="text-right text-gray-500 dark:text-gray-400 transition-colors duration-200">Actions</div>,
         cell: info => {
           const order = info.row.original;
           
@@ -199,7 +232,7 @@ export default function Orders() {
             <div className="flex justify-end items-center space-x-2">
               <button 
                 onClick={() => handleViewDetails(order)} 
-                className="text-blue-600 hover:text-blue-900"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 transition-colors duration-200"
               >
                 <span className="mdi">visibility</span>
               </button>
@@ -255,14 +288,15 @@ export default function Orders() {
         // Update URL search params
         setSearchParams(params);
         
-        const response = await axiosInstance.get(`/order?${params.toString()}`, {
+        const response = await axiosInstance.get<OrdersResponse>(`/order?${params.toString()}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`
           }
         });
         
+        // Update with new response structure
         setOrders(response.data.orders);
-        setTotalOrders(response.data.total);
+        setTotalOrders(response.data.pagination.total);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
         setError('Failed to load orders. Please try again.');
@@ -299,7 +333,7 @@ export default function Orders() {
     };
   
     return (
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
         <PageHeader title="Orders" actions={pageActions} />
         
         <SearchFilters 
@@ -327,12 +361,12 @@ export default function Orders() {
         />
         
         {error && (
-          <div className="mt-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
+          <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-600 text-red-700 dark:text-red-400 transition-colors duration-200">
             {error}
           </div>
         )}
         
-        <div className="mt-4 rounded-lg shadow overflow-hidden">
+        <div className="mt-4 rounded-lg shadow dark:shadow-gray-800/10 overflow-hidden">
           <DataTable
             data={orders}
             columns={columns}
@@ -344,7 +378,7 @@ export default function Orders() {
           />
           
           {!loading && orders && orders.length > 0 && (
-            <div className="px-6 py-4 border-t border-gray-200">
+            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors duration-200">
               <Pagination
                 currentPage={currentPage}
                 totalPages={Math.ceil(totalOrders / ordersPerPage)}
@@ -358,8 +392,8 @@ export default function Orders() {
         
         <Dialog.Root open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-            <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto">
+            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 transition-colors duration-200" />
+            <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl dark:shadow-black/30 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto transition-colors duration-200">
               {selectedOrder && (
                 <OrderDetailView 
                   order={selectedOrder}

@@ -82,7 +82,7 @@ export function DataTable<TData, TValue = unknown>({
   }
 
   return (
-    <div className="w-full overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+    <div className="w-full overflow-x-auto bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/30 transition-colors duration-200" style={{ WebkitOverflowScrolling: 'touch' }}>
       <table className="w-full divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-200">
         <thead className="bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
           {table.getHeaderGroups().map(headerGroup => (
@@ -94,7 +94,8 @@ export function DataTable<TData, TValue = unknown>({
                   className={cn(
                     "text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200",
                     isMobile ? "p-2" : "px-6 py-3",
-                    header.column.id === 'actions' ? 'text-right' : ''
+                    header.column.id === 'actions' ? 'text-right' : '',
+                    header.column.getCanSort() ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-750" : ""
                   )}
                   onClick={header.column.getToggleSortingHandler()}
                 >
@@ -109,10 +110,10 @@ export function DataTable<TData, TValue = unknown>({
                           header.getContext()
                         )}
                     {header.column.getCanSort() && (
-                      <span className="ml-1">
+                      <span className="ml-1 text-gray-400 dark:text-gray-500 transition-colors duration-200">
                         {{
-                          asc: '▲',
-                          desc: '▼',
+                          asc: <span className="text-blue-500 dark:text-blue-400 transition-colors duration-200">▲</span>,
+                          desc: <span className="text-blue-500 dark:text-blue-400 transition-colors duration-200">▼</span>,
                         }[header.column.getIsSorted() as string] || '⇅'}
                       </span>
                     )}
@@ -144,6 +145,13 @@ export function DataTable<TData, TValue = unknown>({
             </tr>
           ))}
         </tbody>
+        <tfoot className="bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
+          <tr>
+            <td colSpan={columns.length} className="px-6 py-3 text-sm text-gray-500 dark:text-gray-400 text-right transition-colors duration-200">
+              {data.length} {data.length === 1 ? 'item' : 'items'}
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   );

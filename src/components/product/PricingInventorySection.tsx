@@ -7,12 +7,10 @@ interface PricingInventorySectionProps {
 }
 
 const PricingInventorySection: React.FC<PricingInventorySectionProps> = ({ product, onChange }) => {
-    // State for formatted price display
     const [formattedPrice, setFormattedPrice] = useState<string>(
         product.price ? product.price.toLocaleString('vi-VN') : ''
     );
 
-    // Update formatted price when product price changes
     useEffect(() => {
         if (product.price !== undefined) {
             setFormattedPrice(product.price.toLocaleString('vi-VN'));
@@ -21,71 +19,73 @@ const PricingInventorySection: React.FC<PricingInventorySectionProps> = ({ produ
         }
     }, [product.price]);
 
-    // Handle price input with formatting
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Remove all non-numeric characters
         const rawValue = e.target.value.replace(/[^\d]/g, '');
         
-        // Update the formatted display
         if (rawValue) {
             setFormattedPrice(parseInt(rawValue).toLocaleString('vi-VN'));
         } else {
             setFormattedPrice('');
         }
         
-        // Create a synthetic event with the numeric value for the parent component
+        // Create a synthetic event to pass to the parent's onChange handler
         const syntheticEvent = {
             ...e,
             target: {
                 ...e.target,
                 name: 'price',
-                value: rawValue ? parseInt(rawValue) : ''
+                value: rawValue ? parseInt(rawValue).toString() : '0'
             }
         };
         
-        onChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
+        onChange(syntheticEvent);
     };
 
     return (
-        <fieldset>
-            <legend className="text-lg font-medium text-gray-900 mb-4">Pricing & Inventory</legend>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <fieldset className="transition-colors duration-200">
+            <legend className="text-lg font-medium text-gray-900 dark:text-white mb-4 transition-colors duration-200">
+                Pricing & Inventory
+            </legend>
+            <div className="space-y-4">
                 <div>
-                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">Price (₫) *</label>
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">
+                        Price *
+                    </label>
                     <div className="relative">
-                        {/* Hidden input for form submission */}
-                        <input 
-                            type="hidden" 
-                            name="price" 
-                            value={product.price || ''} 
-                        />
-                        
-                        {/* Visible formatted input */}
+                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400 transition-colors duration-200">
+                            ₫
+                        </span>
                         <input
                             id="price"
+                            name="price"
                             type="text"
-                            inputMode="numeric"
-                            required
                             value={formattedPrice}
                             onChange={handlePriceChange}
-                            className="input-field pr-8"
+                            className="w-full pl-7 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm 
+                            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+                            focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 
+                            transition-colors duration-200"
+                            required
                             placeholder="0"
                         />
-                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">₫</span>
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">Enter amount in Vietnamese Dong (VND)</p>
                 </div>
+                
                 <div>
-                    <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                    <label htmlFor="stock" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">
+                        Stock
+                    </label>
                     <input
                         id="stock"
                         name="stock"
                         type="number"
-                        min="0"
-                        step="1"
-                        value={product.stock ?? ''}
+                        value={product.stock || ''}
                         onChange={onChange}
-                        className="input-field"
+                        min="0"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm 
+                        bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+                        focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 
+                        transition-colors duration-200"
                         placeholder="0"
                     />
                 </div>

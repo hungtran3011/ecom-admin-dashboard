@@ -79,13 +79,15 @@ const VariationsList: React.FC<VariationsListProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6 transition-colors duration-200">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Variations for {productName}</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors duration-200">
+          Variations for {productName}
+        </h2>
         <button
           type="button"
           onClick={() => setShowAddForm(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
+          className="bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-1 rounded transition-colors duration-200"
           disabled={loading}
         >
           Add Variation
@@ -93,7 +95,7 @@ const VariationsList: React.FC<VariationsListProps> = ({
       </div>
 
       {error && (
-        <div className="mb-4 p-2 bg-red-50 border-l-4 border-red-500 text-red-700">
+        <div className="mb-4 p-2 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 transition-colors duration-200">
           {error}
         </div>
       )}

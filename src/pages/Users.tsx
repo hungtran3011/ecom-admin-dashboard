@@ -118,6 +118,45 @@ export default function Users() {
     }
   };
 
+  // In your Users.tsx file, modify the user update function
+  const handleUserUpdate = async (userId: string, userData: Partial<User>) => {
+    if (!accessToken) return;
+    if (!userId) {
+      console.error('Cannot update user: User ID is undefined');
+      setError('Failed to update user: Missing user ID');
+      return;
+    }
+    
+    setStatusUpdateLoading(userId);
+    
+    try {
+      console.log(`Making PUT request to /user/${userId}`);
+      await axiosInstance.put(`/user/${userId}`, userData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      
+      // Update local state with new user data
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user._id === userId ? { ...user, ...userData } : user
+        )
+      );
+      
+      // If the current user is being viewed in detail, update it
+      if (selectedUser && selectedUser._id === userId) {
+        setSelectedUser(prev => prev ? { ...prev, ...userData } : null);
+      }
+      
+    } catch (err) {
+      console.error('Failed to update user:', err);
+      setError('Failed to update user. Please try again.');
+    } finally {
+      setStatusUpdateLoading(null);
+    }
+  };
+
   // Define columns with TanStack's column helper
   const columnHelper = createColumnHelper<User>();
   
@@ -463,7 +502,12 @@ export default function Users() {
                 onStatusChange={(newStatus) => {
                   handleStatusChange(selectedUser._id, newStatus);
                 }}
-                isUpdating={statusUpdateLoading === selectedUser._id}
+                onUserUpdate={(userId, userData) => {
+                  // Explicitly log the userId to verify it's being passed correctly
+                  console.log('Updating user ID:', userId);
+                  return handleUserUpdate(userId, userData);
+                }}
+                isUpdating={statusUpdateLoading === selectedUser?._id}
               />
             )}
           </Dialog.Content>

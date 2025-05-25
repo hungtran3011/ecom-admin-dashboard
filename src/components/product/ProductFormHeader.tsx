@@ -13,10 +13,11 @@ const ProductFormHeader: React.FC<ProductFormHeaderProps> = ({ productId, produc
 
     return (
         <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold">{title}</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white transition-colors duration-200">{title}</h2>
             <Link
                 to={cancelLink}
-                className="px-4 py-2 border border-gray-300 rounded text-gray-600 hover:bg-gray-100 transition-colors text-sm"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-600 dark:text-gray-300 
+                hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 text-sm"
             >
                 Cancel
             </Link>

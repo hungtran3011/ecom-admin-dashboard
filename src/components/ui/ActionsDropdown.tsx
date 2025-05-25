@@ -30,11 +30,11 @@ export const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
-          className="text-gray-600 hover:text-gray-900"
+          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-200"
           disabled={isLoading}
         >
           {isLoading ? (
-            <span className="mdi animate-spin">sync</span>
+            <span className="mdi animate-spin text-blue-500 dark:text-blue-400 transition-colors duration-200">sync</span>
           ) : (
             <span className="mdi">{triggerIcon}</span>
           )}
@@ -43,14 +43,14 @@ export const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
       
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="bg-white shadow-lg border border-gray-200 rounded-md py-1 min-w-[160px] z-50"
+          className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-md py-1 min-w-[160px] z-50 transition-colors duration-200"
           sideOffset={5}
           align="end"
         >
           {groups.map((group, groupIndex) => (
             <React.Fragment key={groupIndex}>
               {group.groupLabel && (
-                <DropdownMenu.Label className="px-3 py-2 text-xs text-gray-500">
+                <DropdownMenu.Label className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
                   {group.groupLabel}
                 </DropdownMenu.Label>
               )}
@@ -60,7 +60,7 @@ export const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
                   key={itemIndex}
                   onSelect={item.onClick}
                   disabled={item.disabled}
-                  className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
                   {item.icon && <span className="mdi mr-1 text-sm">{item.icon}</span>}
                   {item.label}
@@ -68,7 +68,7 @@ export const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
               ))}
               
               {groupIndex < groups.length - 1 && (
-                <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
+                <DropdownMenu.Separator className="h-px bg-gray-200 dark:bg-gray-700 my-1 transition-colors duration-200" />
               )}
             </React.Fragment>
           ))}
