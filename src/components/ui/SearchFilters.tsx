@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import cn from '../../utils/cn';
 
 interface DateRange {
   start: string | null;
@@ -29,7 +28,6 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   showDateFilters = false,
   className, 
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [localSearch, setLocalSearch] = useState(searchTerm);
   const [localDateRange, setLocalDateRange] = useState<DateRange>(dateRange || {
     start: null,

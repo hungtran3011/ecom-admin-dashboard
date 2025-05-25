@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useUser } from '../hooks/useUser';
@@ -7,6 +7,7 @@ import OrderDetailView from '../components/order/OrderDetailView';
 import { 
   createColumnHelper,
   SortingState,
+  ColumnDef // Add this import
 } from '@tanstack/react-table';
 import { DataTable } from '../components/ui/data-table/DataTable';
 import { PageHeader } from '../components/ui/PageHeader';
@@ -71,6 +72,9 @@ interface OrdersResponse {
     pages: number;
   };
 }
+
+// Add this type alias near your other type definitions
+type OrderColumn = ColumnDef<Order, unknown>;
 
 export default function Orders() {
     const { accessToken } = useUser();
@@ -294,12 +298,16 @@ export default function Orders() {
           }
         });
         
-        // Update with new response structure
-        setOrders(response.data.orders);
+        // Ensure we have an array of orders, even if response is empty
+        const orderData = response.data.orders || [];
+        setOrders(orderData);
         setTotalOrders(response.data.pagination.total);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
         setError('Failed to load orders. Please try again.');
+        // Initialize with empty array on error
+        setOrders([]);
+        setTotalOrders(0);
       } finally {
         setLoading(false);
       }
@@ -369,7 +377,7 @@ export default function Orders() {
         <div className="mt-4 rounded-lg shadow dark:shadow-gray-800/10 overflow-hidden">
           <DataTable
             data={orders}
-            columns={columns}
+            columns={columns as OrderColumn[]}
             sorting={sorting}
             onSortingChange={setSorting}
             isLoading={loading}

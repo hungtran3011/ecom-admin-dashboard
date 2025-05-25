@@ -15,7 +15,7 @@ interface UserBasicInfoProps {
   formData: {
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
     role: UserRole;
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;

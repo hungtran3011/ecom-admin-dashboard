@@ -9,7 +9,7 @@ import { UserSecurityTab } from './DetailView/UserSecurityTab';
 import { UserDetailFooter } from './DetailView/UserDetailFooter';
 
 type UserStatus = 'active' | 'inactive' | 'pending';
-type UserRole = 'admin' | 'manager' | 'editor' | 'viewer';
+type UserRole = 'admin' | "customer" | "anon";
 
 interface UserDetailViewProps {
   user: {

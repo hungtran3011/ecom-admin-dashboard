@@ -11,10 +11,10 @@ const links = [
 ];
 
 const Sidebar: React.FC = () => {
-  const [activeItem, setActiveItem] = React.useState<string | null>(window.location.pathname);
-  const handleItemClick = (item: string) => {
-    setActiveItem(item);
-  };
+  // const [activeItem, setActiveItem] = React.useState<string | null>(window.location.pathname);
+  // const handleItemClick = (item: string) => {
+  //   setActiveItem(item);
+  // };
   return (
     <div className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-colors duration-200">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">

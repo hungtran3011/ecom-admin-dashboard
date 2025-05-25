@@ -23,7 +23,6 @@ interface ActionsDropdownProps {
 export const ActionsDropdown: React.FC<ActionsDropdownProps> = ({
   groups,
   isLoading = false,
-  loadingLabel = 'Loading...',
   triggerIcon = 'more_vert'
 }) => {
   return (

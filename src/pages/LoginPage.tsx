@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
-import { useTheme } from '../hooks/useTheme'; // Add this import for theme support
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');

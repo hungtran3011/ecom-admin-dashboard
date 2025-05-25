@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useUser } from '../hooks/useUser';
@@ -6,6 +6,7 @@ import axiosInstance from '../services/axios';
 import { 
   createColumnHelper,
   SortingState,
+  ColumnDef,
 } from '@tanstack/react-table';
 import { DataTable } from '../components/ui/data-table/DataTable';
 import { PageHeader } from '../components/ui/PageHeader';
@@ -20,7 +21,7 @@ import UserDetailView from '../components/user/UserDetailView';
 type UserStatus = 'active' | 'inactive' | 'pending';
 
 // User role types
-type UserRole = 'admin' | 'manager' | 'editor' | 'viewer';
+type UserRole = 'admin' | 'customer' | 'anon';
 
 // User interface
 interface User {
@@ -41,6 +42,9 @@ interface User {
     country?: string;
   };
 }
+
+// Add this type alias near your other type definitions
+type UserColumn = ColumnDef<User, UserRole>;
 
 export default function Users() {
   const { accessToken } = useUser();
@@ -161,18 +165,21 @@ export default function Users() {
   const columnHelper = createColumnHelper<User>();
   
   const columns = [
-    columnHelper.accessor(row => row, {
+    columnHelper.accessor('avatar', {
       id: 'avatar',
       header: '',
-      cell: info => (
-        <div className="flex items-center">
-          <img 
-            src={info.getValue().avatar || 'https://via.placeholder.com/40'} 
-            alt={`${info.getValue().name}'s avatar`}
-            className="w-8 h-8 rounded-full object-cover mr-2"
-          />
-        </div>
-      ),
+      cell: info => {
+        const user = info.row.original;
+        return (
+          <div className="flex items-center">
+            <img 
+              src={user.avatar || 'https://via.placeholder.com/40'} 
+              alt={`${user.name}'s avatar`}
+              className="w-8 h-8 rounded-full object-cover mr-2"
+            />
+          </div>
+        );
+      },
     }),
     columnHelper.accessor('name', {
       header: 'Name',
@@ -445,28 +452,7 @@ export default function Users() {
             >
               <DataTable
                 data={users}
-                columns={columns.map(col => {
-                  // Apply dark mode styles to column cells if needed
-                  if (col.id === 'name' && col.cell) {
-                    return {
-                      ...col,
-                      cell: info => <span className="font-medium text-gray-900 dark:text-white transition-colors duration-200">{info.getValue()}</span>
-                    };
-                  }
-                  if (col.id === 'email' && col.cell) {
-                    return {
-                      ...col,
-                      cell: info => <span className="text-gray-500 dark:text-gray-400 transition-colors duration-200">{info.getValue()}</span>
-                    };
-                  }
-                  return col;
-                }).filter(col => {
-                  // Optionally filter columns based on screen size (optional)
-                  if (typeof window !== 'undefined' && window.innerWidth < 640) {
-                    return !['lastLogin', 'createdAt'].includes(col.id || '');
-                  }
-                  return true;
-                })}
+                columns={columns as UserColumn[]}
                 sorting={sorting}
                 onSortingChange={setSorting}
                 isLoading={loading}
